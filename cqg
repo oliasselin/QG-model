@@ -1,0 +1,30 @@
+#!/bin/bash                                                                                                                                                                       
+
+#Load the need modules (see readme file)                                                                                                                                           
+rm *.mod
+module load compilers/intel/14.0
+module load mpi/openmpi/1.6.5
+module load libs/fftw/3.3.3
+module load libs/mkl/11.1 
+
+PARA='solver_2.0/parameters.f90'
+MAIN='solver_2.0/main_qg.f90'
+FFT='solver_2.0/fft.f90'
+MPI='solver_2.0/mpi.f90'
+INIT='solver_2.0/init.f90'
+DERI='solver_2.0/derivatives.f90'
+FILE='solver_2.0/files.f90'
+DIAG='solver_2.0/diagnostics.f90'
+ELLI='solver_2.0/elliptic.f90'
+SPEC='solver_2.0/special.f90'
+
+TRID='-L$MKL/lib/em64t -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread'
+
+
+#Define aliases for optimisation options                                                                 
+OPT='-O3 -ipo'
+
+
+#Compile with MPIf90                                                                                                               
+#mpif90 $OPT -fpp $PARA $MPI -L$MPIDIR -lmpi  $FFT -L$FFTDIR -lfftw3 $FILE $DERI $TRID $ELLI $DIAG $INIT  $MAIN -o ~/ndlh/executable_proj8
+mpif90 $PARA $MPI $FFT $FILE $DERI $TRID $ELLI $SPEC $DIAG $INIT  $MAIN -o ~/solver_2.0/exec_qg
